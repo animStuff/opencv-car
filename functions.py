@@ -138,18 +138,22 @@ class DrawLines:
         return self.lineL, self.lineR
 
 class classification_localization:
-    def __init__(self, imagePath):
-        self.image = cv2.imread(imagePath, 0)
+    def __init__(self, image):
+        self.image = image
         self.templates = [(cv2.imread(f'classes/{fileName}', 0), fileName) for fileName in os.listdir('classes')]
         self.required = [(each, each.shape[0], each.shape[1], fileName) for each, fileName in self.templates]
-        self.editedImage = cv2.imread(imagePath)
+        self.editedImage = image
 
     def matchTemplate(self):
         for image, h, w, fileName in self.required:
             res, thresh = cv2.matchTemplate(self.image, image, cv2.TM_CCOEFF_NORMED), .8
             loc = np.where(res >= thresh)
+
+            object_in_scene = False
             for pt in zip(*loc[::-1]):
+                object_in_scene = True
                 cv2.rectangle(self.editedImage, pt, (pt[0] + w, pt[1] + h), (0, 0, 255), 1) #BGR format
+
                 #cv2.putText(self.editedImage, fileName, (pt[0], pt[0] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 0, 255), 2)
 
-        return self.editedImage
+        return self.editedImage, object_in_scene

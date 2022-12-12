@@ -16,8 +16,11 @@ if __name__ == '__main__':
         cv.imwrite(f'results/roads/result{index}.jpg', lanes_image)
 
     for index, path in enumerate(f'test/localization/{imgName}' for imgName in os.listdir('test/localization')):
-        newImage = classification_localization(path).matchTemplate()
+
+        newImage, _ = classification_localization(cv.imread(path, 0)).matchTemplate()
         cv.imwrite(f'results/local/result{index}.jpg', newImage)
+
+
 
 
 
